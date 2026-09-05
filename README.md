@@ -1,0 +1,1 @@
+# microsoft-sentinel-soc-lab
