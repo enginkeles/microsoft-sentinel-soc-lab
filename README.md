@@ -24,8 +24,10 @@
 
  ---------------------------------------------------------------------------------------------------------------------
 - Extend the lab by collating other logs like more Windows Security Events, Sysmon, Powershell, and Entra ID logs.
-  - Installed Sysmon but having issues with getting Logs to show up in the LAW.
-    - Created new DCR for Sysmon events but KQL query not showing the events. 
+  - Installed and configured Sysmon on the Windows VM.
+  - Initially had issues getting Sysmon events to appear in the LAW.
+  - Created a separate DCR for Sysmon events and verified they were successfully ingested after a short delay.
+  - Used KQL to query and analyse the Sysmon events.
 - Write KQL detections for these logs and create Sentinel Analytics Rules to automate detection and trigger alerts.
 - Generate attacks to test the detections.
 - Identify false positives/negatives and possible gaps in logic.
