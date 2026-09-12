@@ -29,6 +29,7 @@
   - Created a separate DCR for Sysmon events and verified they were successfully ingested after a short delay.
   - Used KQL to query and analyse the Sysmon events.
 - Write KQL detections for these logs and create Sentinel Analytics Rules to automate detection and trigger alerts.
-- Generate attacks to test the detections.
-- Identify false positives/negatives and possible gaps in logic.
+  - Wrote KQL detections for PowerShell reconnaissance and created two iterations. V1 broadly searched PowerShell Event ID 4104 data for reconnaissance commands but produced false positives from PowerShell module/framework code.
+  - Developed V2 by parsing the EventData XML and extracting `ScriptBlockText`, allowing the detection to target the actual executed script content and reduce noise.
+  - Deployed both versions as Microsoft Sentinel Analytics Rules and generated controlled PowerShell reconnaissance activity to compare their results and validate alert and incident generation.
 - Document the detection logic, methodology, and findings.
