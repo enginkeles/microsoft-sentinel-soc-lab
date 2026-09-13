@@ -1,35 +1,47 @@
 # Microsoft Sentinel SOC Lab
 
-- Exposed an Azure VM to the internet as an RDP honeypot.
-  - Temporarily configured the NSG to allow inbound traffic.
+Built a Microsoft Sentinel SOC lab using an internet-exposed Azure Windows VM. Collected Windows Security Events, Sysmon, and PowerShell logs in Log Analytics using Azure Monitor Agent and Data Collection Rules. Used KQL to investigate the collected telemetry, created detection rules, and built a Sentinel Workbook to visualise authentication attempts against the VM using IP geolocation data.
+
+## RDP Honeypot
+
+- Created an Azure Windows VM and exposed RDP to the internet.
+  - Temporarily configured the Network Security Group (NSG) to allow inbound traffic.
   - Temporarily disabled Windows Firewall profiles.
- 
-- Configured Windows Security Events to be forwarded into a Log Analytics Workspace (LAW).
-  - Created a Log Analytics Workspace.
-  - Installed the Azure Monitor Agent (AMA) on the Windows VM.
-  - Created a Data Collection Rule (DCR) to collect Windows Security Events from the VM and send them to the LAW.
-  - Generated failed login attempts to confirm logs were being ingested.
-  - Received a large number of failed login attempts from unknown external IPs.
-  - Used KQL against the SecurityEvent table to view and analyse the logs.
-  - Filtered events by fields such as EventID and source IP.
- 
-- Enabled Sentinel on the Log Analytics Workspace.
-  - Added Sentinel to the LAW.
-  - Analysed the security logs stored in the workspace.
 
-- Visualised the failed login attempts.
-  - Created a Sentinel Watchlist containing IP geolocation data.
-  - Used the watchlist to add geographic information to the source IPs.
-  - Created a Sentinel Workbook to visualise the volume and geographic origin of failed login attempts.
+## Log Collection
 
- ---------------------------------------------------------------------------------------------------------------------
-- Extend the lab by collating other logs like more Windows Security Events, Sysmon, Powershell, and Entra ID logs.
-  - Installed and configured Sysmon on the Windows VM.
-  - Initially had issues getting Sysmon events to appear in the LAW.
-  - Created a separate DCR for Sysmon events and verified they were successfully ingested after a short delay.
-  - Used KQL to query and analyse the Sysmon events.
-- Write KQL detections for these logs and create Sentinel Analytics Rules to automate detection and trigger alerts.
-  - Wrote KQL detections for PowerShell reconnaissance and created two iterations. V1 broadly searched PowerShell Event ID 4104 data for reconnaissance commands but produced false positives from PowerShell module/framework code.
-  - Developed V2 by parsing the EventData XML and extracting `ScriptBlockText`, allowing the detection to target the actual executed script content and reduce noise.
-  - Deployed both versions as Microsoft Sentinel Analytics Rules and generated controlled PowerShell reconnaissance activity to compare their results and validate alert and incident generation.
-- Document the detection logic, methodology, and findings.
+- Created a Log Analytics Workspace (LAW) and installed Azure Monitor Agent (AMA) on the Windows VM.
+- Created a Data Collection Rule (DCR) to collect Windows Security Events and send them to the LAW.
+- Generated failed login attempts to verify log ingestion.
+- Observed failed login attempts from unknown external IP addresses.
+- Used KQL against the `SecurityEvent` table to investigate the events and filter by fields including Event ID and source IP.
+
+### Sysmon
+
+- Installed and configured Sysmon on the Windows VM.
+- Created a separate DCR for Sysmon events and verified successful ingestion into Log Analytics.
+- Used KQL to query and analyse the collected Sysmon events.
+
+### PowerShell
+
+- Collected PowerShell Script Block Logging events (Event ID 4104).
+- Used KQL to query and analyse PowerShell execution data.
+
+## Microsoft Sentinel
+
+- Enabled Microsoft Sentinel on the Log Analytics Workspace.
+- Used Sentinel to investigate the collected security telemetry.
+
+## Detection Rules
+
+- Created a KQL detection for PowerShell reconnaissance using Event ID 4104.
+- The initial detection searched PowerShell event data for reconnaissance commands but generated false positives from PowerShell module and framework code.
+- Created a second version that parsed the `EventData` XML and extracted `ScriptBlockText` to target the executed script content and reduce noise.
+- Deployed both versions as Microsoft Sentinel Analytics Rules.
+- Generated controlled PowerShell reconnaissance activity to test both rules and verify alert and incident generation.
+
+## Authentication Attempt Visualisation
+
+- Created a Sentinel Watchlist containing IP geolocation data.
+- Used the watchlist to enrich source IP addresses with geographic information.
+- Created a Sentinel Workbook to visualise the volume and geographic origin of authentication attempts against the VM.
